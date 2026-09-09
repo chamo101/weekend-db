@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>双休公司信息库 · 按城市查询企业休息制度</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1f2329; --muted: #86909c;
+    --border: #e5e6eb; --primary: #165dff; --green: #00b42a; --orange: #ff7d00;
+    --red: #f53f3f; --tag-bg: #f2f3f5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); padding: 24px 16px; }
+  .wrap { max-width: 1000px; margin: 0 auto; }
+  h1 { font-size: 24px; margin-bottom: 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+  .sub a { color: var(--primary); text-decoration: none; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  input, select { padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--card); outline: none; }
+  input:focus, select:focus { border-color: var(--primary); }
+  #q { flex: 1; min-width: 220px; }
+  #city { min-width: 130px; }
+  #wt { min-width: 110px; }
+  .stats { color: var(--muted); font-size: 13px; margin: 8px 0 14px; }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  th, td { padding: 10px 12px; text-align: left; font-size: 14px; border-bottom: 1px solid var(--border); }
+  th { background: var(--tag-bg); color: var(--muted); font-weight: 500; font-size: 13px; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f7f8fa; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; background: var(--tag-bg); margin: 1px; white-space: nowrap; }
+  .tag.green { background: #e8ffea; color: var(--green); }
+  .tag.orange { background: #fff3e8; color: var(--orange); }
+  .tag.red { background: #ffece8; color: var(--red); }
+  .muted { color: var(--muted); font-size: 12px; }
+  .empty { text-align: center; padding: 48px 0; color: var(--muted); }
+  .footer { margin-top: 20px; font-size: 12px; color: var(--muted); line-height: 1.8; }
+  @media (max-width: 640px) { th:nth-child(3), td:nth-child(3), th:nth-child(7), td:nth-child(7) { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>休着 · 双休公司信息库</h1>
+  <div class="sub">开源数据 · 社区共建 · 按<b>城市</b>查询公司双休/请假情况 ｜ <a href="https://github.com/tbd" target="_blank">GitHub 仓库</a> ｜ <a href="#" id="formLink" target="_blank">📝 补充/更新数据（腾讯文档收集表）</a></div>
+  <div class="controls">
+    <input id="q" type="search" placeholder="搜公司名 / 行业 / 备注…（如：字节、半导体）" aria-label="搜索公司">
+    <select id="city" aria-label="选择城市"><option value="">全部城市</option></select>
+    <select id="wt" aria-label="休息制度">
+      <option value="">全部制度</option>
+      <option value="双休">双休</option>
+      <option value="大小周">大小周</option>
+      <option value="单休">单休</option>
+      <option value="上四休三">上四休三</option>
+    </select>
+  </div>
+  <div class="stats" id="stats"></div>
+  <table>
+    <thead><tr>
+      <th>公司</th><th>城市</th><th>行业</th><th>规模</th><th>休息制度</th><th>请假难度</th><th>加班情况</th><th>备注 / 来源</th>
+    </tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div class="footer">
+    ⚠️ 数据来自公开报道与社区贡献，<b>同公司不同城市、不同部门的执行情况可能不同</b>，仅供参考，入职前请多方核实。<br>
+    📝 数据有变化？<a href="#" id="formLink2" target="_blank">点这里提交更新</a>（也欢迎直接在 GitHub 提 PR / Issue）。最后更新：<span id="lastUpdate"></span>
+  </div>
+</div>
+<script>
+let ROWS = [];
+const esc = s => String(s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const wtTag = w => {
+  if (!w) return '<span class="muted">—</span>';
+  const cls = w.includes('双休')||w.includes('上四休三') ? 'green' : (w.includes('大小周') ? 'orange' : 'red');
+  return '<span class="tag ' + cls + '">' + esc(w) + '</span>';
+};
+const lvTag = l => {
+  if (!l) return '<span class="muted">待补充</span>';
+  const cls = l.includes('难')||l.includes('严') ? 'red' : (l.includes('容易')||l.includes('宽松') ? 'green' : 'orange');
+  return '<span class="tag ' + cls + '">' + esc(l) + '</span>';
+};
+function init() {
+  const cities = new Set();
+  ROWS.forEach(r => String(r.city||'').split('/').forEach(c => c && cities.add(c.trim())));
+  document.getElementById('city').innerHTML += [...cities].sort().map(c => '<option>' + esc(c) + '</option>').join('');
+  document.getElementById('lastUpdate').textContent = ROWS.reduce((m,r) => r.last_verified > m ? r.last_verified : m, '') ;
+  document.getElementById('stats').textContent = '共 ' + ROWS.length + ' 条记录 · ' + cities.size + ' 个城市 · 数据持续更新中';
+  render();
+}
+function render() {
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const city = document.getElementById('city').value;
+  const wt = document.getElementById('wt').value;
+  const list = ROWS.filter(r => {
+    if (wt && !(r.weekend_type||'').includes(wt)) return false;
+    if (city && !String(r.city||'').split('/').map(s=>s.trim()).includes(city)) return false;
+    if (q) {
+      const hay = [r.company, r.industry, r.notes, r.district, r.overtime_status].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  const tb = document.getElementById('tbody');
+  if (!list.length) { tb.innerHTML = '<tr><td colspan="8" class="empty">没有匹配结果 — 换个关键词，或去收集表补充这家公司 📝</td></tr>'; return; }
+  tb.innerHTML = list.map(r =>
+    '<tr><td><b>' + esc(r.company) + '</b>' + (r.district ? '<div class="muted">' + esc(r.district) + '</div>' : '') + '</td>' +
+    '<td>' + esc(r.city) + '</td><td>' + esc(r.industry || '—') + '</td><td>' + esc(r.size || '—') + '</td>' +
+    '<td>' + wtTag(r.weekend_type) + '</td><td>' + lvTag(r.leave_difficulty) + '</td>' +
+    '<td class="muted">' + esc(r.overtime_status || '—') + '</td>' +
+    '<td class="muted">' + esc(r.notes || '') + (r.source_url ? ' <a href="' + esc(r.source_url) + '" target="_blank" rel="noopener">[来源]</a>' : '') + '</td></tr>'
+  ).join('');
+  document.getElementById('stats').textContent = '匹配 ' + list.length + ' / ' + ROWS.length + ' 条记录';
+}
+document.getElementById('q').addEventListener('input', render);
+document.getElementById('city').addEventListener('change', render);
+document.getElementById('wt').addEventListener('change', render);
+fetch('./data/companies.csv').then(r => r.text()).then(t => {
+  const lines = t.replace(/^\uFEFF/,'').split('\n').filter(l => l.trim());
+  const parse = line => { const out=[]; let cur='', q=false; for (const ch of line) {
+    if (ch === '"') q = !q; else if (ch === ',' && !q) { out.push(cur); cur=''; } else cur += ch; }
+    out.push(cur); return out; };
+  const head = parse(lines[0]);
+  ROWS = lines.slice(1).map(l => { const cells = parse(l); const o={}; head.forEach((h,i)=>o[h.trim()]=(cells[i]||'').trim()); return o; });
+  init();
+});
+</script>
+</body>
+</html>
