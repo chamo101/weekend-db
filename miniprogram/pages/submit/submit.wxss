@@ -1,0 +1,74 @@
+/* 提交申请页样式 */
+.type-switch {
+  display: flex;
+  padding: 20rpx 24rpx 0;
+  gap: 16rpx;
+}
+.type-item {
+  flex: 1;
+  text-align: center;
+  padding: 18rpx 0;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  background: #fff;
+  color: #607d8b;
+  border: 2rpx solid transparent;
+}
+.type-item.on {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-color: #2e7d32;
+  font-weight: 600;
+}
+
+.form-item {
+  margin-bottom: 24rpx;
+}
+.label {
+  display: block;
+  font-size: 26rpx;
+  color: #546e7a;
+  margin-bottom: 10rpx;
+}
+.required::before {
+  content: '* ';
+  color: #c62828;
+}
+.input {
+  background: #f6f8f6;
+  border-radius: 10rpx;
+  padding: 18rpx 20rpx;
+  font-size: 28rpx;
+  width: auto;
+}
+.textarea {
+  min-height: 140rpx;
+  width: auto;
+}
+.picker-value {
+  color: #263238;
+}
+.picker-value.placeholder {
+  color: #b0bec5;
+}
+.remove-target .target-card {
+  background: #fff3e0;
+  border-radius: 10rpx;
+  padding: 18rpx 20rpx;
+  font-size: 28rpx;
+  color: #e65100;
+}
+
+.submit-area {
+  padding: 10rpx 24rpx 60rpx;
+}
+.submit-btn {
+  width: 100%;
+}
+.submit-tip {
+  display: block;
+  text-align: center;
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  color: #b0bec5;
+}

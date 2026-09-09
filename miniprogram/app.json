@@ -1,0 +1,16 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/detail/detail",
+    "pages/submit/submit"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#2e7d32",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "休着 · 双休公司查询",
+    "backgroundColor": "#f6f8f6"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

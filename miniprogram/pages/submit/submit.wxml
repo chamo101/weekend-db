@@ -1,0 +1,79 @@
+<!-- 提交新增/删减公司申请 -->
+<view class="page">
+
+  <!-- 类型切换 -->
+  <view class="type-switch">
+    <view class="type-item {{type === 'add' ? 'on' : ''}}" bindtap="onTypeTap" data-type="add">➕ 新增公司</view>
+    <view class="type-item {{type === 'remove' ? 'on' : ''}}" bindtap="onTypeTap" data-type="remove">✂️ 删减/纠错</view>
+  </view>
+
+  <!-- 新增表单 -->
+  <view class="card" wx:if="{{type === 'add'}}">
+    <view class="form-item">
+      <text class="label required">公司名</text>
+      <input class="input" placeholder="如：字节跳动" value="{{form.company}}" data-field="company" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <text class="label required">城市</text>
+      <input class="input" placeholder="如：北京（可精确到区）" value="{{form.city}}" data-field="city" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <text class="label required">休息制度</text>
+      <picker range="{{weekendTypes}}" bindchange="onTypeChange">
+        <view class="input picker-value {{form.weekendType ? '' : 'placeholder'}}">
+          {{form.weekendType || '请选择'}}
+        </view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <text class="label">请假难度</text>
+      <picker range="{{leaveLevels}}" bindchange="onLeaveChange">
+        <view class="input picker-value {{form.leaveDifficulty ? '' : 'placeholder'}}">
+          {{form.leaveDifficulty || '请选择（选填）'}}
+        </view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <text class="label">行业</text>
+      <input class="input" placeholder="选填" value="{{form.industry}}" data-field="industry" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <text class="label">信息来源</text>
+      <input class="input" placeholder="选填：链接或说明（提高通过率）" value="{{form.source}}" data-field="source" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <text class="label">备注</text>
+      <input class="input" placeholder="选填" value="{{form.notes}}" data-field="notes" bindinput="onInput" />
+    </view>
+  </view>
+
+  <!-- 删减表单 -->
+  <view class="card" wx:if="{{type === 'remove'}}">
+    <view class="remove-target" wx:if="{{form.company}}">
+      <text class="label">目标公司</text>
+      <view class="target-card">{{form.company}}（{{form.city}}）</view>
+    </view>
+    <view class="form-item" wx:else>
+      <text class="label required">公司名</text>
+      <input class="input" placeholder="要删减/纠错的公司名" value="{{form.company}}" data-field="company" bindinput="onInput" />
+    </view>
+    <view class="form-item" wx:if="{{!form.city}}">
+      <text class="label required">城市</text>
+      <input class="input" placeholder="该公司所在城市" value="{{form.city}}" data-field="city" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <text class="label required">删减/纠错理由</text>
+      <textarea class="input textarea" placeholder="必填：如已倒闭 / 实测单休 / 信息有误（具体说明）"
+                value="{{form.reason}}" data-field="reason" bindinput="onInput" maxlength="300" />
+    </view>
+  </view>
+
+  <!-- 提交 -->
+  <view class="submit-area">
+    <button class="btn-primary submit-btn" bindtap="onSubmit" disabled="{{submitting}}">
+      {{submitting ? '提交中…' : '提交申请'}}
+    </button>
+    <text class="submit-tip">提交后写入共建表，维护者每周审核合入 · 审核结果见共建表</text>
+  </view>
+
+</view>

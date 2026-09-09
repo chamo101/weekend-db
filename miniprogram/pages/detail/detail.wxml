@@ -1,0 +1,65 @@
+<!-- 公司详情 + 匿名讨论区 -->
+<view class="page" wx:if="{{company}}">
+
+  <!-- 公司信息卡 -->
+  <view class="card">
+    <view class="d-head">
+      <text class="d-name">{{company.company}}</text>
+      <text class="tag {{company.tagClass}}">{{company.weekendType || '未知'}}</text>
+    </view>
+    <view class="d-grid">
+      <view class="d-cell"><text class="d-label">城市</text><text>{{company.city}}{{company.district ? ' · ' + company.district : ''}}</text></view>
+      <view class="d-cell"><text class="d-label">行业</text><text>{{company.industry || '—'}}</text></view>
+      <view class="d-cell"><text class="d-label">规模</text><text>{{company.size || '—'}}</text></view>
+      <view class="d-cell"><text class="d-label">请假难度</text><text>{{company.leaveDifficulty || '—'}}</text></view>
+      <view class="d-cell"><text class="d-label">加班情况</text><text>{{company.overtimeStatus || '—'}}</text></view>
+      <view class="d-cell"><text class="d-label">核实时间</text><text>{{company.lastVerified || '—'}}</text></view>
+    </view>
+    <view class="d-notes" wx:if="{{company.notes}}">{{company.notes}}</view>
+    <view class="d-source" wx:if="{{company.sourceUrl}}" bindtap="copySource">信息来源：{{company.sourceType}}（点击复制链接）</view>
+  </view>
+
+  <!-- 讨论区 -->
+  <view class="card">
+    <view class="disc-head">
+      <text class="disc-title">讨论区</text>
+      <text class="disc-count">{{discussions.length}} 条</text>
+    </view>
+
+    <!-- 发布框 -->
+    <view class="disc-input-area">
+      <radio-group class="role-group" bindchange="onRoleChange">
+        <label class="role-item"><radio value="在职" checked="{{role === '在职'}}" color="#2e7d32" />在职</label>
+        <label class="role-item"><radio value="离职" checked="{{role === '离职'}}" color="#2e7d32" />离职</label>
+        <label class="role-item"><radio value="求职者" checked="{{role === '求职者'}}" color="#2e7d32" />求职者</label>
+      </radio-group>
+      <textarea class="disc-input" placeholder="说说这家公司的真实休息制度（完全匿名）"
+                value="{{discContent}}" bindinput="onDiscInput" maxlength="300"
+                auto-height disabled="{{posting}}" />
+      <view class="disc-actions">
+        <text class="disc-tip">匿名发布 · 请勿包含手机号等隐私信息</text>
+        <button class="btn-primary disc-post-btn" size="mini" bindtap="postDisc" disabled="{{posting || !discContent}}">发布</button>
+      </view>
+    </view>
+
+    <!-- 讨论列表 -->
+    <view class="disc-item" wx:for="{{discussions}}" wx:key="index">
+      <view class="disc-meta">
+        <text class="disc-role">{{item.role || '匿名'}}</text>
+        <text class="disc-time">{{item.timeText}}</text>
+        <text class="disc-report" bindtap="reportDisc" data-index="{{index}}">举报</text>
+      </view>
+      <text class="disc-content">{{item.content}}</text>
+    </view>
+    <view class="disc-empty" wx:if="{{!discLoading && discussions.length === 0}}">
+      还没有讨论，来补充第一条一线信息吧
+    </view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="bottom-actions">
+    <button class="btn-plain" bindtap="goApplyAdd">信息有误？申请修改/删减</button>
+    <button class="btn-plain" bindtap="goHome">← 返回列表</button>
+  </view>
+
+</view>

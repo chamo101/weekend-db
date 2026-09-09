@@ -1,0 +1,144 @@
+/* 详情页样式 */
+.d-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.d-name {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #263238;
+}
+.d-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 20rpx;
+}
+.d-cell {
+  width: 50%;
+  margin-bottom: 14rpx;
+  font-size: 26rpx;
+  color: #37474f;
+}
+.d-label {
+  color: #90a4ae;
+  margin-right: 12rpx;
+}
+.d-notes {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #607d8b;
+  background: #f5f7f5;
+  border-radius: 10rpx;
+  padding: 14rpx 18rpx;
+}
+.d-source {
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  color: #1565c0;
+}
+
+.disc-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.disc-title {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+.disc-count {
+  font-size: 24rpx;
+  color: #90a4ae;
+}
+.disc-input-area {
+  background: #f6f8f6;
+  border-radius: 12rpx;
+  padding: 16rpx;
+}
+.role-group {
+  display: flex;
+  margin-bottom: 12rpx;
+}
+.role-item {
+  margin-right: 32rpx;
+  font-size: 24rpx;
+  color: #546e7a;
+}
+.disc-input {
+  width: 100%;
+  min-height: 100rpx;
+  font-size: 26rpx;
+  background: #fff;
+  border-radius: 10rpx;
+  padding: 14rpx;
+  box-sizing: border-box;
+}
+.disc-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12rpx;
+}
+.disc-tip {
+  font-size: 22rpx;
+  color: #b0bec5;
+}
+.disc-post-btn {
+  margin: 0;
+}
+
+.disc-item {
+  border-top: 1rpx solid #eee;
+  padding: 18rpx 0;
+}
+.disc-meta {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+.disc-role {
+  font-size: 22rpx;
+  color: #2e7d32;
+  background: #e8f5e9;
+  border-radius: 6rpx;
+  padding: 2rpx 10rpx;
+  margin-right: 12rpx;
+}
+.disc-time {
+  font-size: 22rpx;
+  color: #b0bec5;
+  flex: 1;
+}
+.disc-report {
+  font-size: 22rpx;
+  color: #b0bec5;
+}
+.disc-content {
+  font-size: 26rpx;
+  color: #37474f;
+  line-height: 1.6;
+}
+.disc-empty {
+  text-align: center;
+  padding: 40rpx 0 10rpx;
+  font-size: 24rpx;
+  color: #b0bec5;
+}
+
+.bottom-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 40rpx 60rpx;
+  gap: 16rpx;
+}
+.btn-plain {
+  background: transparent;
+  color: #2e7d32;
+  font-size: 26rpx;
+  border-radius: 0;
+  padding: 0;
+}
+.btn-plain::after { border: none; }

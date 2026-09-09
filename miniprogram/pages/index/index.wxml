@@ -1,0 +1,67 @@
+<!-- 首页：定位附近公司列表 / 城市切换 / 筛选搜索 -->
+<view class="page">
+
+  <!-- 顶部：定位状态 + 城市选择 -->
+  <view class="topbar">
+    <picker mode="selector" range="{{cityNames}}" value="{{cityIndex}}" bindchange="onCityChange">
+      <view class="city-picker">
+        <text class="loc-icon">📍</text>
+        <text class="city-name">{{currentCity || '选择城市'}}</text>
+        <text class="arrow">▾</text>
+      </view>
+    </picker>
+    <view class="search-box">
+      <input class="search-input" placeholder="搜公司/行业" value="{{keyword}}"
+             bindinput="onKeywordInput" confirm-type="search" bindconfirm="onSearch" />
+    </view>
+  </view>
+
+  <!-- 制度筛选条 -->
+  <scroll-view scroll-x class="filter-bar">
+    <view class="filter-item {{activeFilter === '' ? 'on' : ''}}" bindtap="onFilterTap" data-type="">全部</view>
+    <view class="filter-item {{activeFilter === '双休' ? 'on' : ''}}" bindtap="onFilterTap" data-type="双休">双休</view>
+    <view class="filter-item {{activeFilter === '上四休三' ? 'on' : ''}}" bindtap="onFilterTap" data-type="上四休三">上四休三</view>
+    <view class="filter-item {{activeFilter === '大小周' ? 'on' : ''}}" bindtap="onFilterTap" data-type="大小周">大小周</view>
+    <view class="filter-item {{activeFilter === '单休' ? 'on' : ''}}" bindtap="onFilterTap" data-type="单休">单休</view>
+  </scroll-view>
+
+  <!-- 统计 + 数据版本 -->
+  <view class="stat-line">
+    <text>共 {{list.length}} 家</text>
+    <text class="ver">数据更新：{{dataVersion}}</text>
+  </view>
+
+  <!-- 公司列表 -->
+  <view class="company-list">
+    <view class="card company-item" wx:for="{{list}}" wx:key="index"
+          bindtap="onItemTap" data-item="{{item}}">
+      <view class="row1">
+        <text class="c-name">{{item.company}}</text>
+        <text class="tag {{item.tagClass}}">{{item.weekendType || '未知'}}</text>
+      </view>
+      <view class="row2">
+        <text class="c-meta">{{item.city}}{{item.district ? ' · ' + item.district : ''}}</text>
+        <text class="c-meta">{{item.industry}}</text>
+        <text class="c-meta" wx:if="{{item.size}}">{{item.size}}</text>
+      </view>
+      <view class="row3">
+        <view class="dots" wx:if="{{item.leaveLevel > 0}}">
+          <text class="dot {{item.leaveLevel >= 1 ? 'dot-on' : ''}}"></text>
+          <text class="dot {{item.leaveLevel >= 2 ? 'dot-on' : ''}}"></text>
+          <text class="dot {{item.leaveLevel >= 3 ? 'dot-on' : ''}}"></text>
+          <text class="dot {{item.leaveLevel >= 4 ? 'dot-on' : ''}}"></text>
+          <text class="dot {{item.leaveLevel >= 5 ? 'dot-on' : ''}}"></text>
+          <text class="leave-txt">请假难度</text>
+        </view>
+        <text class="c-dist" wx:if="{{item.distance !== null}}">{{item.distance}}km</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <view class="empty" wx:if="{{!loading && list.length === 0}}">
+    <text>没有找到相关公司</text>
+    <button class="empty-btn" bindtap="goSubmit">去提交申请补充</button>
+  </view>
+
+</view>

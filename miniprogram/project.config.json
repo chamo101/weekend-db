@@ -1,0 +1,14 @@
+{
+  "appid": "touristappid",
+  "projectname": "xiuzhe-weekend-db",
+  "miniprogramRoot": "./",
+  "compileType": "miniprogram",
+  "libVersion": "3.4.0",
+  "setting": {
+    "es6": true,
+    "postcss": true,
+    "minified": true,
+    "urlCheck": false,
+    "enhance": true
+  }
+}

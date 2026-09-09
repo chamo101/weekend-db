@@ -1,0 +1,7 @@
+{
+  "name": "tdocProxy",
+  "version": "1.0.0",
+  "description": "腾讯文档共建表代理：讨论区读写 + 申请写入 + 举报计数",
+  "main": "index.js",
+  "dependencies": {}
+}

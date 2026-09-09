@@ -1,0 +1,82 @@
+page {
+  background: #f6f8f6;
+  font-size: 28rpx;
+  color: #263238;
+}
+
+/* 通用卡片 */
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin: 0 24rpx 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(46, 125, 50, 0.06);
+}
+
+/* 休息制度标签配色（双休绿 / 大小周橙 / 单休红 / 上四休三蓝） */
+.tag {
+  display: inline-block;
+  font-size: 22rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+  margin-right: 12rpx;
+}
+.tag-weekend {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.tag-bizhou {
+  background: #fff3e0;
+  color: #e65100;
+}
+.tag-single {
+  background: #ffebee;
+  color: #c62828;
+}
+.tag-other {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+/* 难度点：1-5 圆点 */
+.dots {
+  display: inline-flex;
+  gap: 6rpx;
+  align-items: center;
+}
+.dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #cfd8dc;
+}
+.dot-on {
+  background: #e65100;
+}
+
+/* 空态 */
+.empty {
+  text-align: center;
+  padding: 120rpx 40rpx;
+  color: #90a4ae;
+}
+.empty-btn {
+  margin-top: 32rpx;
+  background: #2e7d32;
+  color: #fff;
+  font-size: 28rpx;
+  border-radius: 40rpx;
+  padding: 0 48rpx;
+}
+
+/* 主按钮 */
+.btn-primary {
+  background: #2e7d32;
+  color: #fff;
+  border-radius: 40rpx;
+  font-size: 30rpx;
+}
+.btn-primary[disabled] {
+  background: #a5d6a7;
+  color: #fff;
+}
