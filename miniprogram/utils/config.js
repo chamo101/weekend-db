@@ -7,7 +7,7 @@ module.exports = {
   SHEET_DISCUSS: '69CvWH',// 公司讨论区
 
   // 共建表链接（分享/引导用）
-  TDOC_URL: 'https://docs.qq.com/smartsheet/DSUZrY0JlblpjbE96',
+  TDOC_URL: 'https://docs.qq.com/smartsheet/DSUZrY0JLblpjbE96',
   GITHUB_URL: 'https://github.com/chamo101/weekend-db',
 
   // 数据版本（随每次 CSV 快照同步更新）

@@ -31,7 +31,7 @@
 ## 如何补充 / 更新数据（三选一）
 
 1. **📝 腾讯文档共建表**（推荐，无需懂技术，手机可操作）：
-   👉 **https://docs.qq.com/smartsheet/DSUZrY0JlblpjbE96**
+   👉 **https://docs.qq.com/smartsheet/DSUZrY0JLblpjbE96**
    已设为**公开可编辑**：打开即可直接添加/修改记录（表头与 CSV 字段一致，下拉选择休息制度/请假难度/规模）。
    维护者定期把共建表新数据合入本仓库 CSV。
 2. **GitHub Issue**：[新建 Issue](../../issues/new) 用模板填写
