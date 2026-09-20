@@ -40,25 +40,55 @@ def tdoc_call(tool, args):
     except Exception:
         return {'error': f'parse_fail: {p.stdout[:200]} {p.stderr[:200]}'}
 
+def _flatten(field_values):
+    """field_values 数组 → {字段标题: 文本}"""
+    out = {}
+    for f in field_values:
+        title = f.get('field') or ''
+        if not title:
+            continue
+        txt = ''
+        for key in ('text_value', 'option_value'):
+            items = (f.get(key) or {}).get('items') or []
+            if items:
+                txt = items[0].get('text') or ''
+                break
+        if not txt:
+            txt = (f.get('computed_value') or {}).get('text') or ''
+        out[title] = txt
+    return out
+
 def fetch_all():
-    """分页拉取共建表全部记录"""
-    all_records, offset = [], ''
+    """拉取共建表全部记录。
+
+    坑（2026-09-20 修）：smartsheet.list_records 不带 record_ids 全量列举时，
+    返回的 field_values 一律是空数组（服务端降级，只有 total 是准的），
+    照它读会"141 条全空"并静默跳过。必须先取 record_id 列表，再按 record_ids 分批读值。
+    """
+    ids, offset = [], 0
     for _ in range(50):  # 最多50页
-        args = {'file_id': FILE_ID, 'sheet_id': SHEET_ID, 'limit': 200}
-        if offset: args['offset'] = offset
+        args = {'file_id': FILE_ID, 'sheet_id': SHEET_ID, 'limit': 100, 'offset': offset}
         d = tdoc_call('smartsheet.list_records', json.dumps(args, ensure_ascii=False))
-        if d.get('error'): 
-            print(f'list_records error: {d["error"][:200]}', file=sys.stderr)
+        if d.get('error'):
+            print(f'list_records(ids) error: {d["error"][:200]}', file=sys.stderr)
             break
-        # 兼容不同返回结构
-        data = d.get('data') or d
-        recs = data.get('records') or []
-        for r in recs:
-            vals = r.get('fields') or r.get('values') or {}
-            all_records.append(vals)
-        offset = data.get('next_offset') or ''
-        if not offset or not recs: break
-    return all_records
+        recs = d.get('records') or []
+        ids += [r['record_id'] for r in recs if r.get('record_id')]
+        nxt = d.get('next')
+        if not nxt or not recs:
+            break
+        offset = nxt
+    rows = []
+    for i in range(0, len(ids), 40):
+        args = {'file_id': FILE_ID, 'sheet_id': SHEET_ID,
+                'record_ids': ids[i:i + 40], 'include_computed_values': True}
+        d = tdoc_call('smartsheet.list_records', json.dumps(args, ensure_ascii=False))
+        if d.get('error'):
+            print(f'list_records(by_ids) error: {d["error"][:200]}', file=sys.stderr)
+            continue
+        for r in d.get('records') or []:
+            rows.append(_flatten(r.get('field_values') or []))
+    return rows
 
 def norm_row(vals):
     """共建表记录 → CSV 行"""
@@ -74,7 +104,11 @@ def norm_row(vals):
 
 def main():
     remote = fetch_all()
-    print(f'共建表记录: {len(remote)} 条')
+    nonempty = [r for r in remote if (r.get('公司名称') or '').strip()]
+    print(f'共建表记录: {len(remote)} 条（其中有值 {len(nonempty)} 条）')
+    if remote and not nonempty:
+        print('[警告] 拉取到记录但字段值全空——接口降级或表数据异常，本次同步结果不可信，请人工检查',
+              file=sys.stderr)
     if not remote:
         print('共建表为空或拉取失败，跳过同步')
         return 0
