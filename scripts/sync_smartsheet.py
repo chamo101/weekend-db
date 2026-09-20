@@ -2,13 +2,30 @@
 """休着·双休公司信息库 - 腾讯文档共建表 → GitHub CSV 同步脚本
 每周由自动化调用：拉取共建表记录 → 与本地 CSV 合并去重 → 提交推送
 """
-import csv, json, subprocess, sys, os
+import csv, json, re, subprocess, sys, os
 from datetime import datetime
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CSV_PATH = os.path.join(REPO, 'data', 'companies.csv')
-TDOC_SKILL = '/Users/admin/.workbuddy/plugins/cache/workbuddy-builtin/tencent-docs-plugin/5.5.4-wb.38151288.g1ca4889a.hde0fbd244c72/skills/tencent-docs'
+
+def _find_tdoc_skill():
+    """自动定位 tencent-docs 插件最新版本目录（勿写死版本号，插件升级后会失效）"""
+    root = '/Users/admin/.workbuddy/plugins/cache/workbuddy-builtin/tencent-docs-plugin'
+    try:
+        cands = [d for d in os.listdir(root)
+                 if os.path.isdir(os.path.join(root, d, 'skills', 'tencent-docs'))]
+    except OSError:
+        cands = []
+    if not cands:
+        return os.path.join(root, 'skills', 'tencent-docs')
+    def ver(d):
+        return [int(x) for x in re.findall(r'\d+', d.split('-wb')[0])]
+    return os.path.join(root, sorted(cands, key=ver)[-1], 'skills', 'tencent-docs')
+
+TDOC_SKILL = _find_tdoc_skill()
 FILE_ID = 'IFkcBKnZclOz'
+# 共建表分享链接（注意：ID 区分大小写，DSUZrY0J L blpjbE96 的 L 是大写）
+TDOC_URL = 'https://docs.qq.com/smartsheet/DSUZrY0JLblpjbE96'
 SHEET_ID = 'Z9Jl0h'          # 主数据表（双休公司数据主表）
 APP_SHEET_ID = 'ucvytl'      # 新增公司申请表（审核列：申请状态）
 DIS_SHEET_ID = '69CvWH'      # 公司讨论区表（小程序匿名讨论落地）
